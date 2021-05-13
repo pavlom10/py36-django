@@ -20,8 +20,10 @@ def bus_stations(request):
     current_page = request.GET.get('page', 1)
     stations = paginator.get_page(current_page)
 
-    next_page_url = '?' + urlencode({'page': stations.next_page_number()}) if stations.has_next() else None
-    prev_page_url = '?' + urlencode({'page': stations.previous_page_number()}) if stations.has_previous() else None
+    next_page_url = reverse(bus_stations) + \
+                    '?' + urlencode({'page': stations.next_page_number()}) if stations.has_next() else None
+    prev_page_url = reverse(bus_stations) + \
+                    '?' + urlencode({'page': stations.previous_page_number()}) if stations.has_previous() else None
 
     return render(request, 'index.html', context={
         'bus_stations': stations,
