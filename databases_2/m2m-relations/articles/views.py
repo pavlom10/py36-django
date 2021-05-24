@@ -11,8 +11,16 @@ def articles_list(request):
 
     ordering = '-published_at'
     articles = Article.objects.all().order_by(ordering).prefetch_related(
-        'scopes'
+        'scopes', 'articlescope_set'
     )
+
+    for article in articles:
+        try:
+            article_scope = article.articlescope_set.get(is_main=True)
+            article.main_scope_id = article_scope.scope.id
+        except ArticleScope.DoesNotExist:
+            pass
+
     context['object_list'] = articles
 
     # используйте этот параметр для упорядочивания результатов
