@@ -31,21 +31,23 @@ def test_course_list(api_client, course_factory):
 
 @pytest.mark.django_db
 def test_course_by_id(api_client, course_factory):
-    courses = course_factory(_quantity=3)
-    course = course_factory(id=10)
-    url = reverse('courses-list') + '?id=10'
-    resp = api_client.get(url)
+    course = course_factory(name='Python')
+    assert course.id
+    url = reverse('courses-list')
+    params = {'id': course.id}
+    resp = api_client.get(url, params)
     assert resp.status_code == HTTP_200_OK
     resp_first = resp.json()[0]
-    assert resp_first['id'] == 10
+    assert resp_first['id'] == course.id
 
 
 @pytest.mark.django_db
 def test_course_by_name(api_client, course_factory):
-    courses = course_factory(_quantity=3)
     course = course_factory(name='Python')
-    url = reverse('courses-list') + '?name=Python'
-    resp = api_client.get(url)
+    assert course.name
+    url = reverse('courses-list')
+    params = {'name': course.name}
+    resp = api_client.get(url, params)
     assert resp.status_code == HTTP_200_OK
     resp_first = resp.json()[0]
     assert resp_first['name'] == 'Python'
@@ -72,7 +74,6 @@ def test_course_update(api_client, course_factory):
     resp = api_client.patch(url, course_payload)
     assert resp.status_code == HTTP_200_OK
     assert resp.json()['name'] == 'Kotlin'
-
 
 
 @pytest.mark.django_db
